@@ -3,18 +3,17 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Film.
- */
+
 //@Getter
 //@Setter
 @Date
-public class Film {
+public class User {
     private int id;
-    @NonNull
+    @Email
+    @NotBlank
+    private String email;
+    @NotBlank
+    private String login;    
     private String name;
-    private String description;
-    private LocalDateTime releaseDate;
-    @Min
-    private int duration;
+    private LocalDateTime birthday;
 }
