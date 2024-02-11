@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDate;
 
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 class FilmControllerTest {
@@ -52,7 +53,8 @@ class FilmControllerTest {
     void create_EmptyName() {
         film.setName("");
 
-        assertThrows(RuntimeException.class, () -> controller.createFilm(film));
+        assertEquals("Название фильма не указано", assertThrows(ValidationException.class, () ->
+                controller.createFilm(film)).getMessage());
         assertEquals(0, controller.getAllFilms().size());
     }
 
@@ -63,7 +65,8 @@ class FilmControllerTest {
                 "в поле для этого предназначенное. Но всё равно попытаемся его добавить, потому что" +
                 "нужно как-то проверить работу с очень длинным описанием. Вроде уже более 200 символов. Поехали");
 
-        assertThrows(RuntimeException.class, () -> controller.createFilm(film));
+        assertEquals("Описание должно быть не более 200 символов",
+                (assertThrows(RuntimeException.class, () -> controller.createFilm(film)).getMessage()));
         assertEquals(0, controller.getAllFilms().size());
     }
 
@@ -72,7 +75,8 @@ class FilmControllerTest {
     void create_WrongDateRelease() {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
 
-        assertThrows(RuntimeException.class, () -> controller.createFilm(film));
+        assertEquals("Некорректная дата релиза",
+                ((assertThrows(RuntimeException.class, () -> controller.createFilm(film))).getMessage()));
         assertEquals(0, controller.getAllFilms().size());
     }
 
@@ -81,7 +85,8 @@ class FilmControllerTest {
     void create_WrongDuration() {
         film.setDuration(-10);
 
-        assertThrows(RuntimeException.class, () -> controller.createFilm(film));
+        assertEquals("Длительность фильма должна быть не менее 1 минуты",
+                ((assertThrows(RuntimeException.class, () -> controller.createFilm(film))).getMessage()));
         assertEquals(0, controller.getAllFilms().size());
     }
 }

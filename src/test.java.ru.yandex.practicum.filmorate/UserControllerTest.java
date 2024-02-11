@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 class UserControllerTest {
@@ -18,14 +19,14 @@ class UserControllerTest {
             .birthday(LocalDate.of(2020, 10, 10))
             .build();
 
-    @DisplayName("Добавление фильма")
+    @DisplayName("Добавление пользователя")
     @Test
     void createUser() {
         controller.createUser(user);
         assertEquals(1, controller.getAllUsers().size());
     }
 
-    @DisplayName("Обновление фильма")
+    @DisplayName("Обновление пользователя")
     @Test
     void updateUser() {
         User updateUser = User.builder()
@@ -49,7 +50,8 @@ class UserControllerTest {
     @Test
     void emailEmpty() {
         user.setEmail("");
-        assertThrows(RuntimeException.class, () -> controller.createUser(user));
+        assertEquals("Некорректная почта",
+                (assertThrows(ValidationException.class, () -> controller.createUser(user))).getMessage());
         assertEquals(0, controller.getAllUsers().size());
     }
 
@@ -57,7 +59,8 @@ class UserControllerTest {
     @Test
     void emailIncorrect() {
         user.setEmail("emailyandex.ru");
-        assertThrows(RuntimeException.class, () -> controller.createUser(user));
+        assertEquals("Некорректная почта",
+                (assertThrows(ValidationException.class, () -> controller.createUser(user))).getMessage());
         assertEquals(0, controller.getAllUsers().size());
     }
 
@@ -65,7 +68,8 @@ class UserControllerTest {
     @Test
     void userLoginEmpty() {
         user.setLogin("");
-        assertThrows(RuntimeException.class, () -> controller.createUser(user));
+        assertEquals("Логин не должен быть пустым",
+                (assertThrows(ValidationException.class, () -> controller.createUser(user))).getMessage());
         assertEquals(0, controller.getAllUsers().size());
     }
 
@@ -73,7 +77,8 @@ class UserControllerTest {
     @Test
     void userLoginSpace() {
         user.setLogin("Логин логиныч");
-        assertThrows(RuntimeException.class, () -> controller.createUser(user));
+        assertEquals("Логин не должен содержать пробелы",
+                (assertThrows(ValidationException.class, () -> controller.createUser(user))).getMessage());
         assertEquals(0, controller.getAllUsers().size());
     }
 
@@ -81,7 +86,8 @@ class UserControllerTest {
     @Test
     void userBirthdayInFuture() {
         user.setBirthday(LocalDate.of(2024, 10, 10));
-        assertThrows(RuntimeException.class, () -> controller.createUser(user));
+        assertEquals("Некорректный день рождения",
+                (assertThrows(ValidationException.class, () -> controller.createUser(user))).getMessage());
         assertEquals(0, controller.getAllUsers().size());
     }
 }

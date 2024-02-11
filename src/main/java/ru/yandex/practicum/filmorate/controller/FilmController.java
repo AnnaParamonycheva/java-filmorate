@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -33,7 +32,6 @@ public class FilmController {
         return films.values();
     }
 
-    @ResponseBody
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
         filmValidation(film);
@@ -44,24 +42,21 @@ public class FilmController {
         return film;
     }
 
-    @ResponseBody
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         filmValidation(film);
         log.info("Попытка обновления фильма: {}", film);
         Integer id = film.getId();
-        if (films.containsKey(id)) {
-            films.put(id, film);
-            log.info("Фильм обновлен: {}", film);
-
-        } else {
+        if (!films.containsKey(id)) {
             log.info("Фильм не найден: {}", film);
             throw new ValidationException("Фильм не найден");
         }
+        films.put(id, film);
+        log.info("Фильм обновлен: {}", film);
         return film;
     }
 
-    public int generateFilmId() {
+    private int generateFilmId() {
         return ++generatorFilmId;
     }
 
@@ -71,7 +66,7 @@ public class FilmController {
             log.warn("Некорректная дата релиза");
             throw new ValidationException("Некорректная дата релиза");
         }
-        if (film.getName().isEmpty() || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
             log.warn("Название фильма не указано");
             throw new ValidationException("Название фильма не указано");
         }
@@ -79,7 +74,7 @@ public class FilmController {
             log.warn("Длительность фильма должна быть не менее 1 минуты");
             throw new ValidationException("Длительность фильма должна быть не менее 1 минуты");
         }
-        if (film.getDescription().length() > 200 || film.getDescription().isEmpty()) {
+        if (film.getDescription() == null || film.getDescription().isBlank() || film.getDescription().length() > 200) {
             log.warn("Описание должно быть не более 200 символов");
             throw new ValidationException("Описание должно быть не более 200 символов");
         }

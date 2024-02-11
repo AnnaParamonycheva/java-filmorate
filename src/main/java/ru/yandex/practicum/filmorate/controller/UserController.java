@@ -33,7 +33,6 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-
         log.info("Попытка добавления пользователя: {}", user);
         userValidation(user);
         user.setId(generateUserId());
@@ -47,34 +46,32 @@ public class UserController {
         userValidation(user);
         log.info("Попытка обновления пользователя: {}", user);
         Integer id = user.getId();
-        if (users.containsKey(id)) {
-            users.put(id, user);
-            log.info("Пользователь обновлен: {}", user);
-        } else {
+        if (!users.containsKey(id)) {
             log.info("Пользователь не найден: {}", user);
             throw new ValidationException("Пользователь не найден");
         }
+        users.put(id, user);
+        log.info("Пользователь обновлен: {}", user);
         return user;
     }
 
-    public int generateUserId() {
+    private int generateUserId() {
         return ++generatorUserId;
     }
 
     private void userValidation(User user) {
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.warn("Некорректная почта");
-            throw new ValidationException("Некорректная почта" + user.getId() + "'");
+            throw new ValidationException("Некорректная почта");
         }
         if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("Некорректный день рождения");
             throw new ValidationException("Некорректный день рождения");
         }
-        if (user.getLogin().isEmpty() || user.getLogin().isBlank()) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.warn("Логин не должен быть пустым");
             throw new ValidationException("Логин не должен быть пустым");
         }
@@ -83,5 +80,4 @@ public class UserController {
             throw new ValidationException("Логин не должен содержать пробелы");
         }
     }
-
 }
