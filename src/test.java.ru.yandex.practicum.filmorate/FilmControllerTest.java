@@ -6,13 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 class FilmControllerTest {
-
-    private final FilmController controller = new FilmController();
+    @Autowired
+    //private final FilmController controller = new FilmController();
+    private FilmController controller;
     private final Film film = Film.builder()
             .id(1)
             .name("Какой-то фильм")

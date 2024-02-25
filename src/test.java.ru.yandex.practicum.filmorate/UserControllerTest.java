@@ -5,12 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 class UserControllerTest {
-    private final UserController controller = new UserController();
+    @Autowired
+    //private final UserController controller = new UserController();
+    private UserController controller;
     private final User user = User.builder()
             .id(1)
             .email("email@yandex.ru")

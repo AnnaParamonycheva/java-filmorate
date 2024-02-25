@@ -1,20 +1,30 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    
+
     private final Map<Integer, Film> films = new HashMap<>();
     private int generatorFilmId = 0;
 
-    
+    @Override
     public Collection<Film> getAllFilms() {
-        log.info("Вывод списка фильмов");
         return films.values();
     }
-
-    
-    public Film createFilm(@Valid @RequestBody Film film) {
+    @Override
+    public Film createFilm(Film film) {
         filmValidation(film);
         log.info("Попытка добавления фильма: {}", film);
         film.setId(generateFilmId());
@@ -23,18 +33,22 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    
-    public Film updateFilm(@Valid @RequestBody Film film) {
+    @Override
+    public Film updateFilm(Film film) {
         filmValidation(film);
         log.info("Попытка обновления фильма: {}", film);
         Integer id = film.getId();
         if (!films.containsKey(id)) {
             log.info("Фильм не найден: {}", film);
-            throw new ValidationException("Фильм не найден");
+            throw new ObjectNotFoundException("Фильм не найден");
         }
         films.put(id, film);
         log.info("Фильм обновлен: {}", film);
         return film;
+    }
+    @Override
+    public Film getFilmById(int id) {
+        return films.get(id);
     }
 
     private int generateFilmId() {
