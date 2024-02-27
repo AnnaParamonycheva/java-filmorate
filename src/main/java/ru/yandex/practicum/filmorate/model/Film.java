@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+
 public class Film {
 
     private Integer id;
@@ -32,7 +31,7 @@ public class Film {
     @Size(max = 200, message = "Описание должно быть не более 200 символов")
     private String description;
     @NotNull
-    @ReleaseDateContraint (message = "Введите дату релиза не ранее 28 декабря 1895 года.")
+    @ReleaseDateContraint(message = "Введите дату релиза не ранее 28 декабря 1895 года.")
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма должна быть не менее 1 минуты")
     private Integer duration;

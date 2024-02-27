@@ -23,6 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> getAllFilms() {
         return films.values();
     }
+
     @Override
     public Film createFilm(Film film) {
         filmValidation(film);
@@ -46,6 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Фильм обновлен: {}", film);
         return film;
     }
+
     @Override
     public Film getFilmById(int id) {
         return films.get(id);

@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
 
     public Film createFilm(Film film) {
         return filmStorage.createFilm(film);
@@ -36,9 +33,7 @@ public class FilmService {
     public Film getFilmById(int id) {
         Film film = filmStorage.getFilmById(id);
         if (film != null) {
-           // throw new ValidationException("Фильм не найден");
-
-        log.info("Фильм с id: " + id + " отправлен");
+            log.info("Фильм с id: " + id + " отправлен");
         }
         return film;
     }
