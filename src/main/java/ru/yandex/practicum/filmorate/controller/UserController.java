@@ -41,30 +41,33 @@ public class UserController {
         log.info("Попытка обновления пользователя: {}", user);
         return userService.updateUser(user);
     }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
         return userService.getUserById(id);
     }
-    //PUT /users/{id}/friends/{friendId} — добавление в друзья.
+
+    //добавление в друзья.
     @PutMapping("/{id}/friends/{friendId}")
     public List<User> addFriend(@PathVariable int id, @PathVariable int friendId) {
         return userService.addFriend(id, friendId);
     }
-    // DELETE /users/{id}/friends/{friendId} — удаление из друзей.
+
+    //  удаление из друзей.
     @DeleteMapping("/{id}/friends/{friendId}")
     public List<User> removeFriend(@PathVariable int id, @PathVariable int friendId) {
         return userService.removeFriend(id, friendId);
     }
-    //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
+
+    // возвращаем список пользователей, являющихся его друзьями.
     @GetMapping("{id}/friends")
     public List<User> getFriendsList(@PathVariable int id) {
         return userService.getFriendsListById(id);
     }
-    //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
+
+    // список друзей, общих с другим пользователем.
     @GetMapping("/{firstId}/friends/common/{secondId}")
     public List<User> getCommonFriends(@PathVariable int firstId, @PathVariable int secondId) {
         return userService.getCommonFriendsList(firstId, secondId);
     }
-
-
 }
