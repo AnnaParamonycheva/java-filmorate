@@ -19,20 +19,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UserControllerTest {
     @Autowired
     private UserController controller;
-    User user = new User(new HashSet<>(), 1, "email@yandex.ru", "login",
-            "Name", LocalDate.of(2020, 10, 10));
-    User user1 = new User(new HashSet<>(), 2, "emai1l@yandex.ru", "login1",
-            "Name1", LocalDate.of(2020, 10, 11));
-    User user2 = new User(new HashSet<>(), 2, "emai2l@yandex.ru", "login2",
-            "Общий друг", LocalDate.of(2020, 10, 11));
+    User user = new User(1, "email@yandex.ru", "login",
+            "Name", LocalDate.of(2020, 10, 10), new HashSet<>());
+    User user1 = new User(2, "emai1l@yandex.ru", "login1",
+            "Name1", LocalDate.of(2020, 10, 11), new HashSet<>());
+    User user2 = new User(2, "emai2l@yandex.ru", "login2",
+            "Общий друг", LocalDate.of(2020, 10, 11), new HashSet<>());
 
 
     @DisplayName("Обновление пользователя")
     @Test
     void updateUser() {
 
-        User updateUser = new User(new HashSet<>(), 1, "newemail@yandex.ru", "newlogin",
-                "newName", LocalDate.of(2021, 11, 11));
+        User updateUser = new User(1, "newemail@yandex.ru", "newlogin",
+                "newName", LocalDate.of(2021, 11, 11), new HashSet<>());
         controller.createUser(user);
         controller.updateUser(updateUser);
 

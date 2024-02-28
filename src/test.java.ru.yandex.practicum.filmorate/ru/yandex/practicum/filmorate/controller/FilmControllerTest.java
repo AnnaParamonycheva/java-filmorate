@@ -24,17 +24,17 @@ class FilmControllerTest {
     private FilmController controller;
     @Autowired
     private UserController userController;
-    Film film = new Film(1, new HashSet<>(), "Какой-то фильм", "Описание какого-то фильма",
-            LocalDate.of(2023, 9, 1), 90);
-    User user = new User(new HashSet<>(), 1, "email@yandex.ru", "login",
-            "Name", LocalDate.of(2020, 10, 10));
+    Film film = new Film(1, "Какой-то фильм", "Описание какого-то фильма",
+            LocalDate.of(2023, 9, 1), 90, new HashSet<>());
+    User user = new User( 1, "email@yandex.ru", "login",
+            "Name", LocalDate.of(2020, 10, 10),new HashSet<>());
 
     @DisplayName("Обновление фильма")
     @Test
     void update_Film() {
-        Film updateFilm = new Film(1, new HashSet<>(), "Измененное имя",
+        Film updateFilm = new Film(1, "Измененное имя",
                 "Другое описание какого-то фильма",
-                LocalDate.of(2023, 9, 2), 120);
+                LocalDate.of(2023, 9, 2), 120, new HashSet<>());
 
         controller.createFilm(film);
         controller.updateFilm(updateFilm);

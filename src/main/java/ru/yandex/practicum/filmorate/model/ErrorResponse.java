@@ -13,8 +13,4 @@ public class ErrorResponse {
     public ErrorResponse(String error) {
         this.errorMessage = error;
     }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 }

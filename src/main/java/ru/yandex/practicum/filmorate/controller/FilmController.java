@@ -18,7 +18,6 @@ import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -26,7 +25,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/films")
-
 public class FilmController {
 
     private final FilmService filmService;
@@ -49,11 +47,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") int id) {
-        Film film = filmService.getFilmById(id);
-        if (film == null) {
-            throw new ObjectNotFoundException("Фильм не найден");
-        }
-        return film;
+        return filmService.getFilmById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")

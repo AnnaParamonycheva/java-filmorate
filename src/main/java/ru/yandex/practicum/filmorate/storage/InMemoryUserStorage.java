@@ -8,9 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -50,7 +53,81 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(int id) {
-        return users.get(id);
+        User user = users.get(id);
+        if (user == null) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        }
+        log.info("Пользователь с id: '{}' отправлен", id);
+        return user;
+    }
+
+    @Override
+    public List<User> addFriend(int firstId, int secondId) {
+        User firstUser = users.get(firstId);
+        User secondUser = users.get(secondId);
+
+        if (firstUser == null || secondUser == null) {
+            throw new ObjectNotFoundException(String.format("Пользователя с id: %d или с id: %d не существует",
+                    firstId, secondId));
+        }
+        if (firstUser.getFriends().contains(secondId)) {
+            throw new ValidationException("Пользователи уже друзья");
+        }
+        firstUser.getFriends().add(secondId);
+        secondUser.getFriends().add(firstId);
+        log.info("Пользователи: '{}' и '{}' теперь являются друзьями :)",
+                firstUser.getName(),
+                secondUser.getName());
+        return Arrays.asList(firstUser, secondUser);
+    }
+
+    @Override
+    public List<User> removeFriend(int firstId, int secondId) {
+        User firstUser = users.get(firstId);
+        User secondUser = users.get(secondId);
+        if (firstUser == null || secondUser == null) {
+            throw new ObjectNotFoundException(String.format("Пользователя с id: %d или с id: %d не существует",
+                    firstId, secondId));
+        }
+        if (!firstUser.getFriends().contains(secondId)) {
+            throw new ValidationException("Пользователи не являются друзьями");
+        }
+        firstUser.getFriends().remove(secondId);
+        secondUser.getFriends().remove(firstId);
+        log.info("Пользователи: '{}' и '{}' больше не друзья",
+                firstUser.getName(),
+                secondUser.getName());
+        return Arrays.asList(firstUser, secondUser);
+    }
+
+    @Override
+    public List<User> getFriendsListById(int id) {
+        User user = users.get(id);
+        if (user == null) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        }
+        log.info("Получен писок друзей пользователя '{}'",
+                user.getName());
+        return user.getFriends().stream()
+                .map(users::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getCommonFriendsList(int firstId, int secondId) {
+
+        User firstUser = users.get(firstId);
+        User secondUser = users.get(secondId);
+        if (firstUser == null || secondUser == null) {
+            throw new ObjectNotFoundException(String.format("Пользователя с id: %d или с id: %d не существует",
+                    firstId, secondId));
+        }
+        log.info("Список общих друзей пользователей: '{}' и '{}' сформирован ",
+                firstUser.getName(), secondUser.getName());
+        return firstUser.getFriends().stream()
+                .filter(friendId -> secondUser.getFriends().contains(friendId))
+                .map(users::get)
+                .collect(Collectors.toList());
     }
 
     private int generateUserId() {

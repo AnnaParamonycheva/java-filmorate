@@ -23,8 +23,6 @@ import java.util.Set;
 public class Film {
 
     private Integer id;
-    private Set<Integer> usersLikes = new HashSet<>();
-
     @NotBlank(message = "Название фильма не указано")
     private String name;
     @NotNull
@@ -35,4 +33,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма должна быть не менее 1 минуты")
     private Integer duration;
+    private Set<Integer> usersLikes = new HashSet<>();
 }
