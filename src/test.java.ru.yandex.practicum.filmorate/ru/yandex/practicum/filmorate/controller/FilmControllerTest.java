@@ -26,8 +26,8 @@ class FilmControllerTest {
     private UserController userController;
     Film film = new Film(1, "Какой-то фильм", "Описание какого-то фильма",
             LocalDate.of(2023, 9, 1), 90, new HashSet<>());
-    User user = new User( 1, "email@yandex.ru", "login",
-            "Name", LocalDate.of(2020, 10, 10),new HashSet<>());
+    User user = new User(1, "email@yandex.ru", "login",
+            "Name", LocalDate.of(2020, 10, 10), new HashSet<>());
 
     @DisplayName("Обновление фильма")
     @Test
