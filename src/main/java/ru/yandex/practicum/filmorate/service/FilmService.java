@@ -2,9 +2,13 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class FilmService {
+    @Autowired
+    UserStorage userStorage;
 
     private final FilmStorage filmStorage;
 
@@ -35,13 +41,25 @@ public class FilmService {
     }
 
     public Film addLike(int filmId, int userId) {
-        filmStorage.addLike(filmId, userId);
-        return filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userStorage.getUserById(userId);
+        if (user != null) { //проверка излишняя, но надо как-то оправдать создание user
+            film.getUsersLikes().add(userId);
+            log.info("Пользователь с id: {} поставил лайк фильму с id {}", userId, filmId);
+        }
+        return film;
     }
 
     public Film removeLike(Integer filmId, Integer userId) {
-        filmStorage.removeLike(filmId, userId);
-        return filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
+
+        if (!film.getUsersLikes().contains(userId)) {
+            throw new ObjectNotFoundException("Пользователь не ставил лайк фильму");
+        }
+        film.getUsersLikes().remove(userId);
+        log.info("Пользователь с id: {} удалил лайк фильма с id {}", userId, filmId);
+
+        return film;
     }
 
     public List<Film> getPopular(int count) {

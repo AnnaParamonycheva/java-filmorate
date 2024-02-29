@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,8 +15,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    @Autowired
-    UserService userService;
+
     private final Map<Integer, Film> films = new HashMap<>();
     private int generatorFilmId = 0;
 
@@ -58,31 +55,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ObjectNotFoundException("Фильм не найден");
         }
         log.info("Фильм с id: " + id + " отправлен");
-        return film;
-    }
-
-    @Override
-    public Film addLike(int filmId, int userId) {
-        Film film = films.get(filmId);
-        if (film == null || userService.getUserById(userId) == null) {
-            throw new ObjectNotFoundException("Фильм или пользователь не найден");
-        }
-        film.getUsersLikes().add(userId);
-        log.info("Пользователь с id: {} поставил лайк фильму с id {}", userId, filmId);
-        return film;
-    }
-
-    @Override
-    public Film removeLike(Integer filmId, Integer userId) {
-        Film film = films.get(filmId);
-        if (film == null || userService.getUserById(userId) == null) {
-            throw new ObjectNotFoundException("Фильм или пользователь не найден");
-        }
-        if (!film.getUsersLikes().contains(userId)) {
-            throw new ObjectNotFoundException("Пользователь не ставил лайк фильму");
-        }
-        film.getUsersLikes().remove(userId);
-        log.info("Пользователь с id: {} удалил лайк фильма с id {}", userId, filmId);
         return film;
     }
 
