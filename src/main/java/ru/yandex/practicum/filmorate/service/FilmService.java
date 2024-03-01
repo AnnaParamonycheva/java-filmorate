@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -18,10 +16,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class FilmService {
-    @Autowired
-    UserStorage userStorage;
 
+    private final UserStorage userStorage;
     private final FilmStorage filmStorage;
+
 
     public Film createFilm(Film film) {
         return filmStorage.createFilm(film);
@@ -42,8 +40,7 @@ public class FilmService {
 
     public Film addLike(int filmId, int userId) {
         Film film = filmStorage.getFilmById(filmId);
-        User user = userStorage.getUserById(userId);
-        if (user != null) { //проверка излишняя, но надо как-то оправдать создание user
+        if (userStorage.getUserById(userId) != null) {
             film.getUsersLikes().add(userId);
             log.info("Пользователь с id: {} поставил лайк фильму с id {}", userId, filmId);
         }
