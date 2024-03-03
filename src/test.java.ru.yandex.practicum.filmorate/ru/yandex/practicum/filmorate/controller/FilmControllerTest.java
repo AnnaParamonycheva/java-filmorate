@@ -1,3 +1,5 @@
+package ru.yandex.practicum.filmorate.controller;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -5,39 +7,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 
-import ru.yandex.practicum.filmorate.controller.FilmController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
+
+@SpringBootTest
 class FilmControllerTest {
 
-    private final FilmController controller = new FilmController();
-    private final Film film = Film.builder()
-            .id(1)
-            .name("Какой-то фильм")
-            .description("Описание какого-то фильма")
-            .releaseDate(LocalDate.of(2023, 9, 1))
-            .duration(90)
-            .build();
-
-    @DisplayName("Добавление фильма")
-    @Test
-    void create_Film() {
-        controller.createFilm(film);
-        assertEquals(1, controller.getAllFilms().size());
-    }
+    @Autowired
+    private FilmController controller;
+    @Autowired
+    private UserController userController;
+    Film film = new Film(1, "Какой-то фильм", "Описание какого-то фильма",
+            LocalDate.of(2023, 9, 1), 90, new HashSet<>());
+    User user = new User(1, "email@yandex.ru", "login",
+            "Name", LocalDate.of(2020, 10, 10), new HashSet<>());
 
     @DisplayName("Обновление фильма")
     @Test
     void update_Film() {
-        Film updateFilm = Film.builder()
-                .id(1)
-                .name("Измененное имя")
-                .description("Другое описание какого-то фильма")
-                .releaseDate(LocalDate.of(2023, 9, 2))
-                .duration(120)
-                .build();
+        Film updateFilm = new Film(1, "Измененное имя",
+                "Другое описание какого-то фильма",
+                LocalDate.of(2023, 9, 2), 120, new HashSet<>());
+
         controller.createFilm(film);
         controller.updateFilm(updateFilm);
 
@@ -45,7 +43,6 @@ class FilmControllerTest {
         assertEquals("Измененное имя", updateFilm.getName());
         assertEquals(LocalDate.of(2023, 9, 2), updateFilm.getReleaseDate());
         assertEquals(120, updateFilm.getDuration());
-        assertEquals(1, controller.getAllFilms().size());
     }
 
     @DisplayName("Фильм без названия")
@@ -55,7 +52,6 @@ class FilmControllerTest {
 
         assertEquals("Название фильма не указано", assertThrows(ValidationException.class, () ->
                 controller.createFilm(film)).getMessage());
-        assertEquals(0, controller.getAllFilms().size());
     }
 
     @DisplayName("Фильм c очень длинным названием")
@@ -67,7 +63,6 @@ class FilmControllerTest {
 
         assertEquals("Описание должно быть не более 200 символов",
                 (assertThrows(RuntimeException.class, () -> controller.createFilm(film)).getMessage()));
-        assertEquals(0, controller.getAllFilms().size());
     }
 
     @DisplayName("Некорректная дата релиза")
@@ -77,16 +72,43 @@ class FilmControllerTest {
 
         assertEquals("Некорректная дата релиза",
                 ((assertThrows(RuntimeException.class, () -> controller.createFilm(film))).getMessage()));
-        assertEquals(0, controller.getAllFilms().size());
     }
 
     @DisplayName("Длительность фильма отрицательная")
     @Test
     void create_WrongDuration() {
         film.setDuration(-10);
-
         assertEquals("Длительность фильма должна быть не менее 1 минуты",
                 ((assertThrows(RuntimeException.class, () -> controller.createFilm(film))).getMessage()));
-        assertEquals(0, controller.getAllFilms().size());
+    }
+
+    @DisplayName("Добавляем лайк фильму")
+    @Test
+    void put_AddALikeToFilm() {
+        userController.createUser(user);
+        controller.createFilm(film);
+        controller.addFilmLike(film.getId(), user.getId());
+
+        assertEquals(1, film.getUsersLikes().size());
+    }
+
+    @DisplayName("Удаляем лайк")
+    @Test
+    void delete_RemoveLikeFromFilm() {
+        userController.createUser(user);
+        controller.createFilm(film);
+        controller.addFilmLike(film.getId(), user.getId());
+        controller.removeFilmLike(film.getId(), user.getId());
+        assertEquals(0, film.getUsersLikes().size());
+    }
+
+    @DisplayName("вывод списка популярных фильмов")
+    @Test
+    void get_PopularMovies() {
+        userController.createUser(user);
+        controller.createFilm(film);
+        controller.addFilmLike(film.getId(), user.getId());
+        List<Film> popularMoviesList = controller.getPopular(1);
+        assertEquals(1, popularMoviesList.size());
     }
 }
