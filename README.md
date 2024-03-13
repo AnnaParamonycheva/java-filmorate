@@ -5,7 +5,7 @@
 
 ### Примеры запросов в базу данных
 
-<details><summary>#### Пользователи</summary>
+<details><summary>Пользователи</summary>
 
 Получение списка всех пользователей
 
@@ -35,7 +35,7 @@ WHERE f.user_id=1
 ```
 </details>
 
-<details><summary>#### Фильмы</summary>
+<details><summary>Фильмы</summary>
 
 Получение списка всех фильмов
 
