@@ -32,6 +32,8 @@ public class Film {
     @ReleaseDateContraint(message = "Введите дату релиза не ранее 28 декабря 1895 года.")
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма должна быть не менее 1 минуты")
-    private Integer duration;
+    private Integer duration;    
+    private RatingMpa mpa;
+    private final LinkedHashSet<Genre> genres = new LinkedHashSet<>();
     private Set<Integer> usersLikes = new HashSet<>();
 }
