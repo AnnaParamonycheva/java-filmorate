@@ -29,8 +29,7 @@ SELECT u.name AS friend_name,
        sf.status_friendship
 FROM friendship f
 LEFT JOIN users u ON f.friend_id = u.user_id
-LEFT JOIN status_friendship sf ON f.status_friendship_id = sf.status_friendship_id
-WHERE f.user_id=1
+WHERE f.user_id=1 and f.status_friendship=true
 
 ```
 </details>
