@@ -26,10 +26,10 @@ WHERE user_id = 1
 ```SQL
 SELECT u.name AS friend_name,
        u.login AS friend_login,
-       sf.name AS status_friendship
+       sf.status_friendship
 FROM friendship f
-LEFT JOIN users u ON f.user_friend = u.user_id
-LEFT JOIN status_friendship sf ON f.status_friendship = sf.status_id
+LEFT JOIN users u ON f.friend_id = u.user_id
+LEFT JOIN status_friendship sf ON f.status_friendship_id = sf.status_friendship_id
 WHERE f.user_id=1
 
 ```
